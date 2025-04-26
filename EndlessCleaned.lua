@@ -2,8 +2,8 @@ local webhookURL = "https://discord.com/api/webhooks/1365686244444733531/gyVCHBr
 local player = game.Players.LocalPlayer
 
 local list = {
-    154588755, -- YOU
-    4076780530, -- Friend
+    154588755, -- Zxrecrown2
+    4076780530, -- ValZxyr
 }
 
 local isWhitelisted = table.find(list, player.UserId) ~= nil
