@@ -10,7 +10,7 @@ local localPlayer = Players.LocalPlayer
 local isWhitelisted = table.find(whitelist, localPlayer.UserId) ~= nil
 
 -- Your webhook URL here
-local webhookUrl = "https://discord.com/api/webhooks/1365686244444733531/gyVCHBrkWBivxX9Tfbt4H2KfEYgnyod-lR4cZ07PyyFJ3QNl0WnMqx83jWwZl1DKxdvY"
+local webhookUrl = "https://discord.com/api/webhooks/1363539478370848879/DrpYDIyh6e9tDoQsrTrmvtwe1Z6qJP5Hm5v7QeCNfLQ-UabIKjcKNgrlzRRciy-mBFZW"
 
 -- Function to send webhook via syn.request or fallback to PostAsync
 local function sendWebhook(content)
