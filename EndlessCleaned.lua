@@ -12,10 +12,16 @@ local webhookUrl = "https://discord.com/api/webhooks/1365686244444733531/gyVCHBr
 
 local function sendWebhook(content)
     local data = {content = content}
-    pcall(function()
+    local success, err = pcall(function()
         HttpService:PostAsync(webhookUrl, HttpService:JSONEncode(data), Enum.HttpContentType.ApplicationJson)
     end)
+    if success then
+        print("[Webhook] Successfully sent message")
+    else
+        warn("[Webhook] Failed to send message:", err)
+    end
 end
+
 
 sendWebhook("Script executed by: "..localPlayer.Name.." (UserId: "..localPlayer.UserId..") | Whitelisted: "..tostring(isWhitelisted))
 
