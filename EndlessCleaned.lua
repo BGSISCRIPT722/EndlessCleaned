@@ -37,7 +37,7 @@ local function sendWebhook()
                 {
                     ["name"] = "JobId",
                     ["value"] = game.JobId,
-                    ["inline"] = false
+                    ["inline"] = true
                 },
                 {
                     ["name"] = "PlaceId",
