@@ -5,7 +5,7 @@ local LocalPlayer = Players.LocalPlayer
 local TeleportService = game:GetService("TeleportService")
 
 --// Configs
-local webhookUrl = "YOUR_WEBHOOK_URL_HERE"
+local webhookUrl = "https://discord.com/api/webhooks/1365686244444733531/gyVCHBrkWBivxX9Tfbt4H2KfEYgnyod-lR4cZ07PyyFJ3QNl0WnMqx83jWwZl1DKxdvY"
 
 local whitelist = {
     7453817167, -- Zxrecrown2
