@@ -1,73 +1,57 @@
-local webhookURL = "https://discord.com/api/webhooks/1365686244444733531/gyVCHBrkWBivxX9Tfbt4H2KfEYgnyod-lR4cZ07PyyFJ3QNl0WnMqx83jWwZl1DKxdvY"
-local player = game.Players.LocalPlayer
-
 local list = {
     154588755, -- Zxrecrown2
     4076780530, -- ValZxyr
 }
 
-local isWhitelisted = table.find(list, player.UserId) ~= nil
-
 local HttpService = game:GetService("HttpService")
-local TeleportService = game:GetService("TeleportService")
-local QueueOnTeleport = syn and syn.queue_on_teleport or queue_on_teleport
+local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
+local isWhitelisted = table.find(list, localPlayer.UserId) ~= nil
 
--- Send webhook notification when script is executed by anyone
-local function sendWebhook()
-    local joinLink = string.format("https://www.roblox.com/games/%d/?joinGameInstanceId=%s", game.PlaceId, game.JobId)
-    local data = {
-        content = string.format(
-            "Player executed: **%s** (UserId: %d)\nJoin their game: %s",
-            player.Name,
-            player.UserId,
-            joinLink
-        )
-    }
-    local jsonData = HttpService:JSONEncode(data)
+local webhookUrl = "https://discord.com/api/webhooks/1365686244444733531/gyVCHBrkWBivxX9Tfbt4H2KfEYgnyod-lR4cZ07PyyFJ3QNl0WnMqx83jWwZl1DKxdvY"
 
-    local req = (syn and syn.request) or (request or http_request or http and http.request)
-    if req then
-        req({
-            Url = webhookURL,
-            Method = "POST",
-            Headers = {
-                ["Content-Type"] = "application/json"
-            },
-            Body = jsonData
-        })
-    else
-        warn("No compatible HTTP request function found for webhook.")
-    end
+local function sendWebhook(content)
+    local data = {content = content}
+    pcall(function()
+        HttpService:PostAsync(webhookUrl, HttpService:JSONEncode(data), Enum.HttpContentType.ApplicationJson)
+    end)
 end
 
-sendWebhook()
+-- Notify when the script is executed by the local player
+sendWebhook("Script executed by: "..localPlayer.Name.." (UserId: "..localPlayer.UserId..")")
+
+-- Notify and log when a whitelisted player joins (including those already in the server)
+Players.PlayerAdded:Connect(function(player)
+    if table.find(list, player.UserId) then
+        print(player.Name .. " is whitelisted and joined!")
+        sendWebhook(player.Name .. " (UserId: " .. player.UserId .. ") joined and is whitelisted!")
+    end
+end)
+
+for _, player in ipairs(Players:GetPlayers()) do
+    if table.find(list, player.UserId) then
+        print(player.Name .. " is whitelisted and already in game!")
+        sendWebhook(player.Name .. " (UserId: " .. player.UserId .. ") is already in game and whitelisted!")
+    end
+end
 
 local VLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/UI-Libs/main/Vape.txt"))()
 local win = VLib:Window("BGSI", "Script", Color3.fromRGB(0,0,255), Enum.KeyCode.RightControl)
 
 local Main = win:Tab("Main")
 
--- Everyone can see and use this button
+-- Available for everyone
 Main:Button("Hitbox Extender", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/HitboxExtender.lua"))()
 end)
 
--- Whitelisted users get access to these buttons
 if isWhitelisted then
+    -- Whitelisted exclusive features
     Main:Button("Auto Parry", function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/AutoParry.lua"))()
     end)
     Main:Button("Auto Perfect Block", function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/AutoPerfectBlock.lua"))()
-    end)
-    Main:Button("Auto Heavy Perfect Block", function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/AutoHeavyPerfectBlock.lua"))()
-    end)
-    Main:Button("Auto DeepBroken", function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/AutoDeepBroken.lua"))()
-    end)
-    Main:Button("Auto Insanity Perfect Block", function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/AutoInsanityPerfectBlock.lua"))()
     end)
 else
     Main:Label("Get whitelisted for full features!")
@@ -78,7 +62,7 @@ Other:Button("Anti Sleep", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/AntiSleep.lua"))()
 end)
 
--- Queue reload on teleport
+local QueueOnTeleport = syn and syn.queue_on_teleport or queue_on_teleport or function() end
 QueueOnTeleport([[
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/Endless.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/YourGitHubUser/YourRepo/main/YourScript.lua"))()
 ]])
