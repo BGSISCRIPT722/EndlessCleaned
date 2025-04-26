@@ -1,3 +1,16 @@
+local HttpService = game:GetService("HttpService")
+
+local testWebhook = "https://discord.com/api/webhooks/1365686244444733531/gyVCHBrkWBivxX9Tfbt4H2KfEYgnyod-lR4cZ07PyyFJ3QNl0WnMqx83jWwZl1DKxdvY"
+
+local success, err = pcall(function()
+    HttpService:PostAsync(testWebhook, HttpService:JSONEncode({content = "Webhook test message"}))
+end)
+
+if success then
+    print("Webhook test sent successfully!")
+else
+    warn("Webhook test failed:", err)
+end
 local function obf(s)
     local r = ""
     for i = 1, #s do
