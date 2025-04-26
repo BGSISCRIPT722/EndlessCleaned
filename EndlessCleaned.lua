@@ -1,65 +1,47 @@
--- Whitelist user IDs here
-local whitelist = {
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+local LocalPlayer = Players.LocalPlayer
+
+-- Whitelist table
+local list = {
     7453817167, -- Zxrecrown2
     4076780530, -- ValZxyr
 }
 
-local Players = game:GetService("Players")
-local HttpService = game:GetService("HttpService")
-local localPlayer = Players.LocalPlayer
-local isWhitelisted = table.find(whitelist, localPlayer.UserId) ~= nil
+local isWhitelisted = table.find(list, LocalPlayer.UserId) ~= nil
 
--- Your webhook URL here
-local webhookUrl = "https://discord.com/api/webhooks/1363539478370848879/DrpYDIyh6e9tDoQsrTrmvtwe1Z6qJP5Hm5v7QeCNfLQ-UabIKjcKNgrlzRRciy-mBFZW"
-
--- Function to send webhook via syn.request or fallback to PostAsync
+-- Webhook sending
+local webhookUrl = "https://discord.com/api/webhooks/1365686244444733531/gyVCHBrkWBivxX9Tfbt4H2KfEYgnyod-lR4cZ07PyyFJ3QNl0WnMqx83jWwZl1DKxdvY"
 local function sendWebhook(content)
-    local data = {
-        content = content
-    }
-    local jsonData = HttpService:JSONEncode(data)
-
-    if syn and syn.request then
-        local success, err = pcall(function()
+    pcall(function()
+        local data = {content = content}
+        local headers = {["Content-Type"] = "application/json"}
+        if syn and syn.request then
             syn.request({
                 Url = webhookUrl,
                 Method = "POST",
-                Headers = { ["Content-Type"] = "application/json" },
-                Body = jsonData,
+                Headers = headers,
+                Body = HttpService:JSONEncode(data)
             })
-        end)
-        if not success then
-            warn("[Webhook] syn.request failed: " .. tostring(err))
         else
-            print("[Webhook] Sent successfully with syn.request")
+            HttpService:PostAsync(webhookUrl, HttpService:JSONEncode(data), Enum.HttpContentType.ApplicationJson)
         end
-    else
-        local success, err = pcall(function()
-            HttpService:PostAsync(webhookUrl, jsonData, Enum.HttpContentType.ApplicationJson)
-        end)
-        if not success then
-            warn("[Webhook] HttpService:PostAsync failed: " .. tostring(err))
-        else
-            print("[Webhook] Sent successfully with PostAsync")
-        end
-    end
+    end)
 end
 
--- Send webhook on script execution
-sendWebhook("Script executed by: " .. localPlayer.Name .. " (UserId: " .. localPlayer.UserId .. ") - Whitelisted: " .. tostring(isWhitelisted))
+-- Send webhook
+sendWebhook("Script executed by: " .. LocalPlayer.Name .. " (UserId: " .. LocalPlayer.UserId .. ")")
 
--- Load UI Lib and create window
+-- Load UI
 local VLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/UI-Libs/main/Vape.txt"))()
-local win = VLib:Window("BGSI", "Script", Color3.fromRGB(0, 0, 255), Enum.KeyCode.RightControl)
+local win = VLib:Window("BGSI", "Script", Color3.fromRGB(0,0,255), Enum.KeyCode.RightControl)
 
 local Main = win:Tab("Main")
 
--- Button everyone can see/use
 Main:Button("Hitbox Extender", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/HitboxExtender.lua"))()
 end)
 
--- Whitelist-only buttons
 if isWhitelisted then
     Main:Button("Auto Parry", function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/AutoParry.lua"))()
@@ -76,10 +58,8 @@ Other:Button("Anti Sleep", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/AntiSleep.lua"))()
 end)
 
--- Queue the script on teleport to auto-run
-local QueueOnTeleport = syn and syn.queue_on_teleport or queue_on_teleport or function() end
+-- Fix Teleport Hook (REALLY important)
+local QueueOnTeleport = syn and syn.queue_on_teleport or queue_on_teleport
 QueueOnTeleport([[
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/Endless.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/BGSISCRIPT722/EndlessCleaned/main/EndlessCleaned.lua"))()
 ]])
-
-print("Script loaded. Whitelisted:", isWhitelisted)
