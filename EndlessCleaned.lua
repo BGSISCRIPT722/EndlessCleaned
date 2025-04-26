@@ -103,6 +103,6 @@ end)
 --// Teleport Hook (makes script auto-load on teleport)
 local queue = syn and syn.queue_on_teleport or queue_on_teleport or function() end
 queue([[
-    loadstring(game:HttpGet("PASTE_RAW_LINK_OF_THIS_SCRIPT_HERE"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/BGSISCRIPT722/EndlessCleaned/refs/heads/main/EndlessCleaned.lua"))()
 ]])
 
