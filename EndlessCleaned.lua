@@ -10,17 +10,19 @@ local isWhitelisted = table.find(list, localPlayer.UserId) ~= nil
 
 local webhookUrl = "https://discord.com/api/webhooks/1365686244444733531/gyVCHBrkWBivxX9Tfbt4H2KfEYgnyod-lR4cZ07PyyFJ3QNl0WnMqx83jWwZl1DKxdvY"
 
-local function sendWebhook(content)
-    local data = {content = content}
-    local success, err = pcall(function()
-        HttpService:PostAsync(webhookUrl, HttpService:JSONEncode(data), Enum.HttpContentType.ApplicationJson)
-    end)
-    if success then
-        print("[Webhook] Successfully sent message")
-    else
-        warn("[Webhook] Failed to send message:", err)
-    end
+if syn and syn.request then
+    syn.request({
+        Url = webhookUrl,
+        Method = "POST",
+        Headers = {["Content-Type"] = "application/json"},
+        Body = HttpService:JSONEncode({content = "Webhook test via syn.request"})
+    })
+    print("Webhook sent with syn.request")
+else
+    print("syn.request not available, using PostAsync fallback")
+    sendWebhook("Webhook test via PostAsync")
 end
+
 
 
 sendWebhook("Script executed by: "..localPlayer.Name.." (UserId: "..localPlayer.UserId..") | Whitelisted: "..tostring(isWhitelisted))
