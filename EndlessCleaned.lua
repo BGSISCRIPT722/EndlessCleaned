@@ -1,5 +1,5 @@
 local list = {
-    154588755, -- Zxrecrown2
+    7453817167, -- Zxrecrown2
     4076780530, -- ValZxyr
 }
 
@@ -10,67 +10,66 @@ local isWhitelisted = table.find(list, localPlayer.UserId) ~= nil
 
 local webhookUrl = "https://discord.com/api/webhooks/1365686244444733531/gyVCHBrkWBivxX9Tfbt4H2KfEYgnyod-lR4cZ07PyyFJ3QNl0WnMqx83jWwZl1DKxdvY"
 
-if syn and syn.request then
-    syn.request({
-        Url = webhookUrl,
-        Method = "POST",
-        Headers = {["Content-Type"] = "application/json"},
-        Body = HttpService:JSONEncode({content = "Webhook test via syn.request"})
-    })
-    print("Webhook sent with syn.request")
-else
-    print("syn.request not available, using PostAsync fallback")
-    sendWebhook("Webhook test via PostAsync")
+local function sendWebhook(content)
+    local data = {content = content}
+    local jsonData = HttpService:JSONEncode(data)
+
+    if syn and syn.request then
+        local success, err = pcall(function()
+            syn.request({
+                Url = webhookUrl,
+                Method = "POST",
+                Headers = {["Content-Type"] = "application/json"},
+                Body = jsonData
+            })
+        end)
+        if not success then
+            warn("Webhook failed with syn.request: "..tostring(err))
+        end
+    else
+        local success, err = pcall(function()
+            HttpService:PostAsync(webhookUrl, jsonData, Enum.HttpContentType.ApplicationJson)
+        end)
+        if not success then
+            warn("Webhook failed with HttpService.PostAsync: "..tostring(err))
+        end
+    end
 end
 
-
-
-sendWebhook("Script executed by: "..localPlayer.Name.." (UserId: "..localPlayer.UserId..") | Whitelisted: "..tostring(isWhitelisted))
+-- Send webhook once when script runs
+sendWebhook("Script executed by: "..localPlayer.Name.." (UserId: "..localPlayer.UserId..")")
 
 local VLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/UI-Libs/main/Vape.txt"))()
 local win = VLib:Window("BGSI", "Script", Color3.fromRGB(0,0,255), Enum.KeyCode.RightControl)
 
 local Main = win:Tab("Main")
 
--- Everyone can access this
+-- Everyone gets this button
 Main:Button("Hitbox Extender", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/HitboxExtender.lua"))()
 end)
 
 if isWhitelisted then
-    -- Whitelisted get full features/buttons
+    -- Whitelisted users get full buttons/features
     Main:Button("Auto Parry", function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/AutoParry.lua"))()
     end)
-
     Main:Button("Auto Perfect Block", function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/AutoPerfectBlock.lua"))()
     end)
-
-    Main:Button("Auto Heavy Perfect Block", function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/AutoHeavyPerfectBlock.lua"))()
-    end)
-
-    Main:Button("Auto DeepBroken", function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/AutoDeepBroken.lua"))()
-    end)
-
-    Main:Button("Auto Insanity Perfect Block", function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/AutoInsanityPerfectBlock.lua"))()
-    end)
+    -- Add more whitelist-only features here
 else
-    -- Non-whitelisted see this label only
+    -- Non-whitelisted see a message
     Main:Label("Get whitelisted for full features!")
 end
 
 local Other = win:Tab("Other")
-
 Other:Button("Anti Sleep", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/AntiSleep.lua"))()
 end)
 
--- Setup queue on teleport to reload this script automatically
+-- Ensure script runs on teleport so everyone joining always runs it
 local QueueOnTeleport = syn and syn.queue_on_teleport or queue_on_teleport or function() end
 QueueOnTeleport([[
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/refs/heads/main/Endless.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/DroidloI/BGSI/main/Endless.lua"))()
 ]])
