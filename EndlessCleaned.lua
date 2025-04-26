@@ -1,5 +1,5 @@
 local list = {
-    154588755, -- Zxrecrown2
+    7453817167, -- Zxrecrown2
     4076780530, -- ValZxyr
 }
 
